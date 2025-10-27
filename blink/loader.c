@@ -417,7 +417,8 @@ static bool LoadElf(struct Machine *m,  //
                            Read16(ehdr->phentsize) * i);
     switch (Read32(phdr->type)) {
       case PT_GNU_STACK_:
-        execstack = false;
+        // asm("int3");
+        execstack = Read32(phdr->flags) & PF_X_;
         break;
       case PT_LOAD_:
         end = LoadElfLoadSegment(m, elf->execfn, ehdr, esize, phdr, end, &prot,

@@ -43,11 +43,7 @@ static long GetSystemPageSize(void) {
   return 4096;
 #else
   long z;
-#ifdef _SC_GRANSIZE
-  unassert((z = sysconf(_SC_GRANSIZE)) > 0);
-#else
   unassert((z = sysconf(_SC_PAGESIZE)) > 0);
-#endif
   unassert(IS2POW(z));
   return MAX(4096, z);
 #endif
@@ -99,6 +95,9 @@ static void *PortableMmap(void *addr,     //
 }
 
 static int GetBitsInAddressSpace(void) {
+#ifdef __EMSCRIPTEN__
+  return 32;
+#else
   int i;
   void *ptr;
   uint64_t want;
@@ -117,6 +116,7 @@ static int GetBitsInAddressSpace(void) {
     }
   }
   Abort();
+#endif
 }
 
 static u64 GetVirtualAddressSpace(int vabits, long pagesize) {
